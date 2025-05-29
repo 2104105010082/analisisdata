@@ -46,8 +46,21 @@ st.markdown("Visualisasi data dan insight dari dataset Bike Sharing")
 # === SIDEBAR ===
 with st.sidebar:
     st.header("Filter Musim")
-    selected_season_num = st.selectbox("Pilih Musim", sorted(df["season"].dropna().unique()))
-    selected_season = {1: 'Spring', 2: 'Summer', 3: 'Fall', 4: 'Winter'}.get(selected_season_num, "Unknown")
+# Mapping musim dari angka ke nama
+    season_map = {
+        1: 'Spring',
+        2: 'Summer',
+        3: 'Fall',
+        4: 'Winter'
+}
+    # Balik mapping untuk seleksi
+    season_name_to_number = {v: k for k, v in season_map.items()}
+
+    # Buat pilihan musim berdasarkan nama
+    season_names = [season_map[num] for num in sorted(df["season"].dropna().unique())]
+    selected_season_name = st.selectbox("Pilih Musim", season_names)
+    selected_season_num = season_name_to_number[selected_season_name]
+    selected_season = selected_season_name
 
     st.header("Filter Cuaca")
     selected_weather = st.multiselect(
