@@ -152,35 +152,37 @@ for col in ['registered', 'casual', 'temp']:
 
 
     # 3. Segmentasi pengguna berdasarkan pola peminjaman pada musim gugur 2012
-    st.markdown("**3. Bagaimana segmentasi pengguna berdasarkan pola peminjaman mereka pada musim gugur 2012?**")
-    fall_2012_df = df[(df['dteday'].dt.year == 2012) & (df['season'] == 3)].copy()
+# 3. Segmentasi pengguna berdasarkan pola peminjaman pada musim gugur 2012
+st.markdown("**3. Bagaimana segmentasi pengguna berdasarkan pola peminjaman mereka pada musim gugur 2012?**")
 
-    if fall_2012_df.empty:
-        st.error("❌ Tidak ada data untuk musim gugur tahun 2012. Silakan cek kembali file CSV.")
-        st.write("### Data yang ada di CSV untuk 2012, Season:")
-        st.dataframe(df[df['dteday'].dt.year == 2012][['dteday', 'season']].drop_duplicates())
-    else:
-        segmentation_data = fall_2012_df[['casual', 'registered']]
-        kmeans = KMeans(n_clusters=3, random_state=42)
-        fall_2012_df['Cluster'] = kmeans.fit_predict(segmentation_data)
+fall_2012_df = df[(df['dteday'].dt.year == 2012) & (df['season'] == 3)].copy()
 
-        fig, ax = plt.subplots(figsize=(8, 6))
-        sns.scatterplot(
-            data=fall_2012_df,
-            x='casual',
-            y='registered',
-            hue='Cluster',
-            palette='Set1',
-            s=80,
-            ax=ax
-        )
-        ax.set_title("Segmentasi Pengguna Sepeda (Musim Gugur 2012)")
-        ax.set_xlabel("Jumlah Peminjaman Kasual")
-        ax.set_ylabel("Jumlah Peminjaman Terdaftar")
-        ax.grid(True)
-        ax.legend(title='Cluster')
+if fall_2012_df.empty:
+    st.error("❌ Tidak ada data untuk musim gugur tahun 2012.")
+    st.dataframe(df[df['dteday'].dt.year == 2012][['dteday', 'season']].drop_duplicates())
+else:
+    # Segmentasi berdasarkan kolom casual & registered
+    segmentation_data = fall_2012_df[['casual', 'registered']]
+    kmeans = KMeans(n_clusters=3, random_state=42)
+    fall_2012_df['Cluster'] = kmeans.fit_predict(segmentation_data)
 
-        st.pyplot(fig)
+    # Plot
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.scatterplot(
+        data=fall_2012_df,
+        x='casual',
+        y='registered',
+        hue='Cluster',
+        palette='Set1',
+        s=80,
+        ax=ax
+    )
+    ax.set_title("Segmentasi Pengguna Sepeda (Musim Gugur 2012)")
+    ax.set_xlabel("Jumlah Peminjaman Kasual")
+    ax.set_ylabel("Jumlah Peminjaman Terdaftar")
+    ax.grid(True)
+    ax.legend(title='Cluster')
+    st.pyplot(fig)
 
 # === FOOTER ===
 st.markdown("---")
